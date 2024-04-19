@@ -98,11 +98,11 @@ A continuación se detallan los endpoints disponibles en la aplicación, separad
 * `POST /odilo/api/auth/register`: Endpoint para registrar un nuevo usuario. Se verifica que el `username` o `email` no se encuentren ya registrados, como asi tambien que la `password` posea entre 6 y 20 caracteres. Y no menos importante, se verifica que sea mayor de 18 años.
 * `POST /odilo/api/auth/login`: Endpoint para iniciar sesión tanto con rol admin o user y obtener un token JWT.
 
-##### Con permisos de USER
+##### Con permisos de USER (Estas url necesitan un Authorization Bearer)
 * `GET /odilo/api/users/{userId}`: Endpoint para obtener información de un usuario específico (por motivos de seguridad decidi que solo pueda consultar su propio id que se chequea contra el JWT para que no pueda acceder a informacion de otros users tal como la de un admin por ejemplo, aunque se podria filtrar la busqueda por rol tambien, pero use el sentido comun cuando un user consulta su info personal).
 * `DELETE /odilo/api/users/{userId}`: Endpoint para eliminar un user, que en realidad es a si mismo, esto se verifica que el id sea el mismo que posee el username proveniente del JWT.
 
-##### Con permisos de ADMIN
+##### Con permisos de ADMIN (Estas url necesitan un Authorization Bearer)
 
 Para users admin, se puede hacer login con `username: admin` y `password: adminpass`
 
