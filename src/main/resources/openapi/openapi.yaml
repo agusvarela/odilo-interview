@@ -1,0 +1,344 @@
+openapi: 3.0.1
+info:
+  title: Odilo Interview API
+  description: "Find the [Odilo Postman collection](https://documenter.getpostman.com/view/10728290/2sA2rAyMtc)"
+  contact:
+    name: Agustin Varela
+    url: https://github.com/agusvarela/odilo-interview
+    email: agus.varela10@gmail.com
+  version: "1.0"
+servers:
+  - url: http://localhost:8080
+    description: Server URL in Development environment
+tags:
+  - name: AdminController
+    description: The Admin API - Only for admin users
+  - name: UserController
+    description: The User API - Only for users authenticated
+  - name: AuthController
+    description: The General API - Only for regular user
+paths:
+  /odilo/api/admin/users/{userId}:
+    put:
+      tags:
+        - AdminController
+      summary: Change user password
+      operationId: changeUserPassword
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangePasswordRequest'
+        required: true
+      responses:
+        "401":
+          description: Unauthorized resource access
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        "204":
+          description: Successful operation
+          content:
+            '*/*':
+              schema:
+                type: object
+        "409":
+          description: New and actual password are the same
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+  /odilo/api/auth/register:
+    post:
+      tags:
+        - AuthController
+      summary: Register a new user
+      operationId: register
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+        required: true
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        "409":
+          description: Username or email already exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        "400":
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        "404":
+          description: Role not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+  /odilo/api/auth/login:
+    post:
+      tags:
+        - AuthController
+      summary: Login user
+      operationId: login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+        required: true
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        "400":
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+  /odilo/api/users/{userId}:
+    get:
+      tags:
+        - UserController
+      summary: Get user by userId
+      operationId: getUserById
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        "401":
+          description: Unauthorized resource access
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        "403":
+          description: Userid does not match with the logged user token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+    delete:
+      tags:
+        - UserController
+      summary: Delete a specific user
+      operationId: deleteUserById
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        "401":
+          description: Unauthorized resource access
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        "403":
+          description: Userid does not match with the logged user token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        "204":
+          description: Successful operation
+          content:
+            '*/*':
+              schema:
+                type: object
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+  /odilo/api/admin/users:
+    get:
+      tags:
+        - AdminController
+      summary: Get all user
+      operationId: getAllUsers
+      responses:
+        "401":
+          description: Unauthorized resource access
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserListResponse'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+components:
+  schemas:
+    ChangePasswordRequest:
+      required:
+        - password
+      type: object
+      properties:
+        password:
+          maxLength: 20
+          minLength: 6
+          type: string
+    ApiError:
+      type: object
+      properties:
+        errorMessage:
+          type: string
+        errorDescription:
+          type: string
+    RegisterRequest:
+      required:
+        - dateOfBirth
+        - email
+        - password
+        - username
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          maxLength: 20
+          minLength: 6
+          type: string
+        email:
+          type: string
+        dateOfBirth:
+          type: string
+          format: date
+    UserResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        username:
+          type: string
+        email:
+          type: string
+        dateOfBirth:
+          type: string
+          format: date
+    LoginRequest:
+      required:
+        - password
+        - username
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+    LoginResponse:
+      type: object
+      properties:
+        jwtToken:
+          type: string
+    UserListResponse:
+      type: object
+      properties:
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserResponse'
